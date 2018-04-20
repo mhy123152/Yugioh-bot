@@ -45,7 +45,7 @@ class Nox(Provider):
     def take_png_screenshot(self):
         while True:
             try:
-                command = "bin\\adb.exe shell \"screencap -p | busybox base64\""
+                command = "bin\\adb.exe -s 127.0.0.1:62001 shell \"screencap -p | busybox base64\""
                 pcommand = os.popen(command)
                 png_screenshot_data = pcommand.read()
                 png_screenshot_data = base64.b64decode(png_screenshot_data)
