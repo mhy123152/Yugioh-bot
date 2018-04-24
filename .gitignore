@@ -1,3 +1,6 @@
+### exe
+tesseract*.exe
+
 ### bin directory
 bin/tess/*
 bin/*.exe
@@ -68,4 +71,7 @@ coverage_html/
 assets/train/
 test_config.ini
 install_requirements.txt
+<<<<<<< HEAD
 /tesseract-ocr-setup-3.05.01.exe
+=======
+>>>>>>> 06e100a7f066eedb3421478adbdfb2f3661cf403
