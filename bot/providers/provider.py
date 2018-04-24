@@ -44,11 +44,11 @@ class Provider(DuelLinks, Misc, Actions):
         t = threading.currentThread()
         self.register_thread(t)
         self.root.info("starting auto run through")
-        for x in range(0, 8):
-            if self.run_time.stop:
-                # Leaves a checkpoint when stopped
-                self.current_run = x
-                break
+        for x in range(0, 888): # 无限运行
+            #if self.run_time.stop:
+            #    # Leaves a checkpoint when stopped
+            #    self.current_run = x
+            #    break
             self.root.debug("Run through {}".format(x + 1))
             self.compare_with_back_button()
             self.wait_for_ui(1)
@@ -222,6 +222,7 @@ class Provider(DuelLinks, Misc, Actions):
 
     def do_system_call(self, command):
         if not self.run_time.stop:
+            self.root.debug("RUN COMMAND: '{}'".format(command))
             CREATE_NO_WINDOW = 0x08000000
             subprocess.call(command, shell=True, creationflags=CREATE_NO_WINDOW)
 

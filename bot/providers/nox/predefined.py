@@ -17,7 +17,7 @@ auto_duel_box = (left, top, left + width, top + height)
 duel_variant_v = {
     'v1'         : (230, 690),
     'v2-duel'    : (120, 690),
-    'v2-autoduel': (290, 690)
+    'v2-autoduel': (440, 700)
 }
 
 
@@ -105,7 +105,7 @@ class NoxPredefined(Predefined):
 
     @property
     def dialog_ok(self):
-        return 150, 400
+        return 450, 600 # 修改NPC对话窗口点击位置
 
     @property
     def street_replay(self):

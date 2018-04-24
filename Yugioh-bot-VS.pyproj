@@ -1,0 +1,89 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>e519a30b-7e20-478d-bd73-486fdcf70688</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>main.py</StartupFile>
+    <SearchPath>..\Yugioh-bot-VS</SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>Yugioh-bot-VS</Name>
+    <RootNamespace>Yugioh-bot-VS</RootNamespace>
+    <IsWindowsApplication>False</IsWindowsApplication>
+    <InterpreterId>Global|PythonCore|3.6</InterpreterId>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <CommandLineArguments>bot -s</CommandLineArguments>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="bot\debug_helpers\helpers_decorators.py" />
+    <Compile Include="bot\debug_helpers\image_compare.py" />
+    <Compile Include="bot\debug_helpers\logger.py" />
+    <Compile Include="bot\debug_helpers\__init__.py" />
+    <Compile Include="bot\modes\Battle.py" />
+    <Compile Include="bot\modes\Events.py" />
+    <Compile Include="bot\modes\SpecialEvents.py" />
+    <Compile Include="bot\modes\__init__.py" />
+    <Compile Include="bot\providers\actions.py" />
+    <Compile Include="bot\providers\duellinks.py" />
+    <Compile Include="bot\providers\misc.py" />
+    <Compile Include="bot\providers\nox\nox.py" />
+    <Compile Include="bot\providers\nox\predefined.py" />
+    <Compile Include="bot\providers\nox\__init__.py" />
+    <Compile Include="bot\providers\predefined.py" />
+    <Compile Include="bot\providers\provider.py" />
+    <Compile Include="bot\providers\steam\predefined.py" />
+    <Compile Include="bot\providers\steam\steam.py" />
+    <Compile Include="bot\providers\steam\__init__.py" />
+    <Compile Include="bot\providers\trainer_matches.py" />
+    <Compile Include="bot\providers\__init__.py" />
+    <Compile Include="bot\utils\algo.py" />
+    <Compile Include="bot\utils\common.py" />
+    <Compile Include="bot\utils\data.py" />
+    <Compile Include="bot\utils\watcher.py" />
+    <Compile Include="bot\utils\__init__.py" />
+    <Compile Include="fix_build.py" />
+    <Compile Include="install.py" />
+    <Compile Include="main.py" />
+    <Compile Include="setup.py" />
+    <Compile Include="versioneer.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bot\" />
+    <Folder Include="bot\debug_helpers\" />
+    <Folder Include="bot\modes\" />
+    <Folder Include="bot\providers\" />
+    <Folder Include="bot\providers\nox\" />
+    <Folder Include="bot\providers\steam\" />
+    <Folder Include="bot\utils\" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|PythonCore|3.6" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="appveyor.yml" />
+    <Content Include="config.ini" />
+    <Content Include="logging.yaml" />
+    <Content Include="main.spec" />
+    <Content Include="setup.cfg" />
+    <Content Include="_config.yml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>

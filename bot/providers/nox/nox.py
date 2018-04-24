@@ -23,15 +23,16 @@ from bot.shared import *
 class Nox(Provider):
     NotPath = None
     _debug = False
-
+    adb_specific_device = ""
     def __init__(self, scheduler, config, run_time):
         super(Nox, self).__init__(scheduler, config, run_time)
         self.predefined = NoxPredefined(self._config, nox_current_version)
         self.NoxPath = os.path.join(self._config.get('nox', 'location'), 'Nox.exe')
+        self.adb_specific_device = "127.0.0.1:62001" # 指定adb设备，避免多个Android设备冲突
 
     def swipe_time(self, x1, y1, x2, y2, time_amount):
-        command = "bin\\adb.exe shell input swipe %d %d %d %d %d" % (
-            x1, y1, x2, y2, time_amount)
+        command = "bin\\adb.exe -s %s shell input swipe %d %d %d %d %d" % (
+            self.adb_specific_device, x1, y1, x2, y2, time_amount)
         self.do_system_call(command)
 
     def swipe_right(self, time_sleep=0):
@@ -39,13 +40,13 @@ class Nox(Provider):
         self.wait_for_ui(2)
 
     def swipe(self, x1, y1, x2, y2):
-        command = "bin\\adb.exe shell input swipe %d %d %d %d " % (x1, y1, x2, y2)
+        command = "bin\\adb.exe -s %s shell input swipe %d %d %d %d " % (self.adb_specific_device, x1, y1, x2, y2)
         self.do_system_call(command)
 
     def take_png_screenshot(self):
         while True:
             try:
-                command = "bin\\adb.exe shell \"screencap -p | busybox base64\""
+                command = "bin\\adb.exe -s %s shell \"screencap -p | busybox base64\"" % (self.adb_specific_device)
                 pcommand = os.popen(command)
                 png_screenshot_data = pcommand.read()
                 png_screenshot_data = base64.b64decode(png_screenshot_data)
@@ -59,14 +60,14 @@ class Nox(Provider):
 
     def tap(self, x, y):
         self.root.debug("Tapping at location ({},{})".format(int(x), int(y)))
-        command = "bin\\adb.exe shell input tap %d %d" % (int(x), int(y))
+        command = "bin\\adb.exe -s %s shell input tap %d %d" % (self.adb_specific_device, int(x), int(y))
         if self._debug:
             # Helper to debug taps
             input("waiting for confirmation press enter")
         self.do_system_call(command)
 
     def key_escape(self):
-        command = "bin\\adb.exe shell input keyevent 4"
+        command = "bin\\adb.exe -s %s shell input keyevent 4" %(self.adb_specific_device)
         self.do_system_call(command)
 
     root = logging.getLogger("bot.provider.Nox")
@@ -105,7 +106,7 @@ class Nox(Provider):
         return False
 
     def __start_app__(self):
-        command = "bin\\adb.exe shell monkey -p jp.konami.duellinks -c android.intent.category.LAUNCHER 1"
+        command = "bin\\adb.exe -s %s shell monkey -p jp.konami.duellinks -c android.intent.category.LAUNCHER 1" % (self.adb_specific_device)
         self.do_system_call(command)
 
     def pass_through_initial_screen(self, already_started=False):
@@ -198,7 +199,7 @@ class Nox(Provider):
     def click_auto_duel(self):
         self.root.debug("AUTO-DUEL FOUND CLICKING")
         self.wait_for_ui(.1)
-        self.tap(356, 85)
+        self.tap(440, 700) # 修正自动决斗点击坐标
 
     @deprecation.deprecated(deprecated_in="0.5.0", removed_in="0.6.0", current_version=clean_version,
                             details="Battle Modes are now defined separate from the provider")
@@ -297,12 +298,18 @@ class Nox(Provider):
                 self.battle_mode(battle, version, dl_info)
                 self.current_battle = False
             else:
-                self.wait_for_ui(2)
+                self.wait_for_ui(5) # 延长扫描间隔时间
                 self.special_events(dl_info)
+
                 dl_info.status = "failure/Back-Button"
                 loop_scan(self.compare_with_back_button, **{'info': dl_info})
+                
+                dl_info.status = "failure/Cancle-Button"
+                loop_scan(self.compare_with_cancel_button, **{'info': dl_info}) # 添加扫描Cancel按钮，避免在线决斗
+
                 dl_info.status = "failure/Close-Button"
                 loop_scan(self.scan_for_close, **{'info': dl_info})
+                
                 dl_info.status = "success/Gift"
                 loop_scan(self.scan_for_ok, **{'info': dl_info})
-            self.wait_for_ui(2)
+            self.wait_for_ui(5) # 延长扫描间隔时间

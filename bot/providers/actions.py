@@ -38,6 +38,7 @@ class Actions(object):
             return self.last_img
         screen_shot = self.take_png_screenshot()
         nparr = np.fromstring(screen_shot, np.uint8)
+        print("nparr: %s"%(nparr))
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         if fail == 5:
             raise Exception("Cannot obtain proper image for provider")

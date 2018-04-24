@@ -94,6 +94,7 @@ class NPCBattle(AbstractBattle):
         self.provider.tapnsleep(self.provider.predefined.button_duel, .1)
         dialog = True
         while dialog:
+            self.provider.wait_for_ui(5) # 设置扫描决斗结束的间隔时间为5s
             dialog = self.provider.check_if_battle(self.provider.get_img_from_screen_shot())
             if dialog:
                 self.provider.tap(*self.provider.predefined.button_duel)

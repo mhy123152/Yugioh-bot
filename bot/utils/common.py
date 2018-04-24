@@ -42,7 +42,7 @@ def default_config(home="."):
 
     config['nox'] = {
         'location'     : r'C:\Program Files (x86)\Nox\bin',
-        'killNoxOnDone': True,  # kill nox when a run through is done
+        'killNoxOnDone': False,  # kill nox when a run through is done
     }
     return config
 
