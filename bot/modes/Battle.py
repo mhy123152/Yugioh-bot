@@ -82,25 +82,24 @@ class NPCBattle(AbstractBattle):
         if info:
             info.status = "Battle Ended"
             self.log(info)
-        self.provider.wait_for_ui(.5)
+        self.provider.wait_for_ui(3)
         self.provider.tap(*self.provider.predefined.button_duel)
         self.provider.wait_for('NEXT', True)
-        self.provider.tapnsleep(self.provider.predefined.button_duel, .5)
+        self.provider.tapnsleep(self.provider.predefined.button_duel, 5)
         self.provider.wait_for('NEXT', True)
-        self.provider.wait_for_ui(.3)
-        self.provider.tap(*self.provider.predefined.button_duel)
+        self.provider.tapnsleep(self.provider.predefined.button_duel, 5)
         self.provider.wait_for_white_bottom(True)
-        self.provider.wait_for_ui(.5)
-        self.provider.tapnsleep(self.provider.predefined.button_duel, .1)
+        self.provider.wait_for_ui(5)
+        self.provider.tapnsleep(self.provider.predefined.button_duel, 3)
         dialog = True
         while dialog:
             self.provider.wait_for_ui(5) # 设置扫描决斗结束的间隔时间为5s
             dialog = self.provider.check_if_battle(self.provider.get_img_from_screen_shot())
             if dialog:
                 self.provider.tap(*self.provider.predefined.button_duel)
-        self.provider.wait_for_ui(.5)
+        self.provider.wait_for_ui(3)
         self.provider.scan_for_ok(LOW_CORR)
-        self.provider.wait_for_ui(.1)
+        self.provider.wait_for_ui(3)
         self.provider.scan_for_ok(LOW_CORR)
         self.signalers[CheckPoints.afterEnding].emit(info)
 

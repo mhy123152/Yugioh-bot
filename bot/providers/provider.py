@@ -50,8 +50,22 @@ class Provider(DuelLinks, Misc, Actions):
             #    self.current_run = x
             #    break
             self.root.debug("Run through {}".format(x + 1))
+
+            self.wait_for_ui(1)
             self.compare_with_back_button()
             self.wait_for_ui(1)
+            self.compare_with_cancel_button()
+            self.wait_for_ui(1)
+            self.scan_for_close()
+            self.wait_for_ui(1)
+            self.scan_for_ok()
+            self.wait_for_ui(1)
+
+            self.tapnsleep(self.predefined.skip_tap, 1) #跳过各种人物出现，活动界面
+            self.tapnsleep(self.predefined.skip_tap, 1)
+            self.tapnsleep(self.predefined.skip_tap, 1)
+
+            self.wait_for_ui(3)
             self.swipe_right()
             try:
                 self.scan()
@@ -135,7 +149,7 @@ class Provider(DuelLinks, Misc, Actions):
                     self.battle_mode(battle, version, dl_info)
                     self.current_battle = False
             except DuelError:
-                self.wait_for_ui(1)
+                self.wait_for_ui(5)
             except Exception as e:
                 self.register_thread(None)
                 raise e
@@ -195,26 +209,34 @@ class Provider(DuelLinks, Misc, Actions):
             try:
                 word = Provider.img_to_string(area, "Auto-Duel")
             except:
-                self.wait_for_ui(1)
+                self.wait_for_ui(3)
                 continue
-            self.wait_for_ui(.5)
+            self.wait_for_ui(2)
         self.click_auto_duel()
 
     def wait_for_white_bottom(self, tryScanning=False):
         self.root.debug("WAITING FOR WHITE BOTTOM TO APPEAR")
         img = self.get_img_from_screen_shot()
         b = self.check_if_battle(img)
+        c = 0
         while not b and not self.run_time.stop:
+            if c > 10: break
             if tryScanning:
                 found = self.scan_for_ok(LOW_CORR)
                 if found:
-                    self.wait_for_ui(.5)
+                    self.wait_for_ui(2)
             img = self.get_img_from_screen_shot()
             b = self.check_if_battle(img)
             if b:
                 break
-            self.wait_for_ui(1)
-        self.root.debug("White Bottom Found")
+            self.wait_for_ui(3)
+            c = c + 1
+
+        if b:
+            self.root.debug("White Bottom Found")
+        else:
+            self.root.debug("White Bottom Not Found, Max Looped!")
+
 
     def wait_for_ui(self, amount):
         if not self.run_time.stop:
@@ -261,7 +283,7 @@ class Provider(DuelLinks, Misc, Actions):
                 try:
                     condition = fn(*args, **kwargs)
                 except Exception:
-                    if exceptions_occurred > 5:
+                    if exceptions_occurred > 10:
                         if throwException:
                             raise Exception("Maximum exception count occurred waiting for {}".format(message))
                         return False

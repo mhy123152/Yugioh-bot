@@ -5,13 +5,13 @@ import numpy as np
 
 
 def loop_scan(fn, **kwargs):
-    limit = 3
+    limit = 3 # 延长循环次数
     doit = True
     l_times = 0
-    while doit and l_times <= limit:
+    while doit and l_times <= limit: 
         l_times += 1
         doit = fn(**kwargs)
-        time.sleep(1)
+        time.sleep(1) # 延长扫描间隔时间
 
 
 def mask_image(lower_mask, upper_mask, img, apply_mask=False):

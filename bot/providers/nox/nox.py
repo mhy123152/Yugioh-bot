@@ -31,8 +31,7 @@ class Nox(Provider):
         self.adb_specific_device = "127.0.0.1:62001" # 指定adb设备，避免多个Android设备冲突
 
     def swipe_time(self, x1, y1, x2, y2, time_amount):
-        command = "bin\\adb.exe -s %s shell input swipe %d %d %d %d %d" % (
-            self.adb_specific_device, x1, y1, x2, y2, time_amount)
+        command = "bin\\adb.exe -s %s shell input swipe %d %d %d %d %d" % (self.adb_specific_device, x1, y1, x2, y2, time_amount)
         self.do_system_call(command)
 
     def swipe_right(self, time_sleep=0):
@@ -67,7 +66,7 @@ class Nox(Provider):
         self.do_system_call(command)
 
     def key_escape(self):
-        command = "bin\\adb.exe -s %s shell input keyevent 4" %(self.adb_specific_device)
+        command = "bin\\adb.exe -s %s shell input keyevent 4" % (self.adb_specific_device)
         self.do_system_call(command)
 
     root = logging.getLogger("bot.provider.Nox")
@@ -88,11 +87,11 @@ class Nox(Provider):
                     self.scan_for_ok(LOW_CORR)
                 ok = self.img_to_string(img, alphabet)
             except:
-                self.wait_for_ui(1)
+                self.wait_for_ui(3)
                 continue
             if ok == word:
                 break
-            self.wait_for_ui(2)
+            self.wait_for_ui(5)
 
     def __is_initial_screen__(self, *args, **kwargs):
         original = cv2.imread(os.path.join(self.assets, "start_screen.png"))
@@ -134,7 +133,7 @@ class Nox(Provider):
 
     def wait_for_notifications(self, *args, **kwargs):
         self.scan_for_close()
-        self.wait_for_ui(1)
+        self.wait_for_ui(3)
         self.scan_for_ok()
         self.wait_for_ui(3)
         t = self.compare_with_back_button(corr=5)
@@ -198,7 +197,7 @@ class Nox(Provider):
 
     def click_auto_duel(self):
         self.root.debug("AUTO-DUEL FOUND CLICKING")
-        self.wait_for_ui(.1)
+        self.wait_for_ui(3)
         self.tap(440, 700) # 修正自动决斗点击坐标
 
     @deprecation.deprecated(deprecated_in="0.5.0", removed_in="0.6.0", current_version=clean_version,
@@ -211,36 +210,36 @@ class Nox(Provider):
         self.wait_for('OK')
         if info:
             info.status = "Battle Ended"
-            self.root.info("NPC Battle Mode,Points: ({},{}) at location: ({}), message: {}".format(
-                info.x, info.y, info.page, info.status
-            ))
+            self.root.info("NPC Battle Mode,Points: ({},{}) at location: ({}), message: {}".format(info.x, info.y, info.page, info.status))
 
-        self.wait_for_ui(.5)
+        self.wait_for_ui(5)
         self.tap(*self.predefined.button_duel)
         self.wait_for('NEXT', True)
-        self.tapnsleep(self.predefined.button_duel, .5)
+        self.tapnsleep(self.predefined.button_duel, 5)
         self.wait_for('NEXT', True)
-        self.wait_for_ui(.3)
+        self.wait_for_ui(3)
         self.tap(*self.predefined.button_duel)
         self.wait_for_white_bottom(True)
-        self.wait_for_ui(.5)
-        self.tapnsleep(self.predefined.button_duel, .1)
+        self.wait_for_ui(5)
+        self.tapnsleep(self.predefined.button_duel, 3)
         dialog = True
         while dialog:
             dialog = self.check_if_battle(self.get_img_from_screen_shot())
             if dialog:
                 self.tap(*self.predefined.button_duel)
-        self.wait_for_ui(.5)
+        self.wait_for_ui(5)
         self.scan_for_ok(LOW_CORR)
-        self.wait_for_ui(.1)
+        self.wait_for_ui(3)
         self.scan_for_ok(LOW_CORR)
         # battle_calls = self.run_time.battle_calls
-        # for section in ["beforeStart", "afterStart", "beforeEnd", "afterEnd"]:
+        # for section in ["beforeStart", "afterStart", "beforeEnd",
+        # "afterEnd"]:
         #    for value in battle_calls.get(section):
         #        pass
         #         self.root.debug(value)
 
     def check_if_battle(self, img):
+        self.root.debug("check_if_battle()")
         img = np.array(img)
         img = img[750:800, 0:400]
         blue_min = np.array([250, 250, 250], np.uint8)
@@ -268,6 +267,7 @@ class Nox(Provider):
     def scan_for_ok(self, corr=HIGH_CORR, info=None, img=None):
         corrword = look_up_translation_correlation(corr)
         self.root.debug("LOOK FOR WORD '{}', {} CORRERLATION".format('OK', corrword))
+        self.root.debug("scan_for_ok()")
         if img is None:
             img = self.get_img_from_screen_shot()
         t = tm.Trainer(img, 480, 50)
@@ -275,21 +275,29 @@ class Nox(Provider):
         return self.__wrapper_kmeans_result__(t, location, corr, info)
 
     def scan(self):
+        index = 0;
         for x, y, current_page in self.possible_battle_points():
+            index = index + 1
+            self.root.debug("scan() {}".format(index))
+
+            self.tapnsleep(self.predefined.skip_tap, 1)
+            self.tapnsleep(self.predefined.skip_tap, 1)
+            self.tapnsleep(self.predefined.skip_tap, 1)
+
             self.compare_with_back_button(info=None)
             self.wait_for_ui(1)
-            self.tapnsleep((x, y), .5)
+            self.tapnsleep((x, y), 1)
             img1 = self.get_img_from_screen_shot()
             battle = self.check_if_battle(img1)
-            self.wait_for_ui(2.5)
+            self.wait_for_ui(3)
             dl_info = DuelLinksInfo(x, y, current_page, "Starting Battle")
             version = 0
             if battle:
-                self.tapnsleep(self.predefined.dialog_ok, 2.5)
+                self.tapnsleep(self.predefined.dialog_ok, 5)
                 try:
                     battle, version = self.verify_battle()
                 except DuelError:
-                    self.tapnsleep(self.predefined.dialog_ok, 2.5)
+                    self.tapnsleep(self.predefined.dialog_ok, 5)
                     battle, version = self.verify_battle()
             if battle:
                 self.current_battle = True
@@ -298,8 +306,9 @@ class Nox(Provider):
                 self.battle_mode(battle, version, dl_info)
                 self.current_battle = False
             else:
-                self.wait_for_ui(5) # 延长扫描间隔时间
+                self.wait_for_ui(3) # 延长扫描间隔时间
                 self.special_events(dl_info)
+
 
                 dl_info.status = "failure/Back-Button"
                 loop_scan(self.compare_with_back_button, **{'info': dl_info})
@@ -312,4 +321,4 @@ class Nox(Provider):
                 
                 dl_info.status = "success/Gift"
                 loop_scan(self.scan_for_ok, **{'info': dl_info})
-            self.wait_for_ui(5) # 延长扫描间隔时间
+            self.wait_for_ui(3) # 延长扫描间隔时间
