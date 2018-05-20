@@ -75,11 +75,45 @@ class Nox(Provider):
     def __str__():
         return "Nox"
 
-    def wait_for(self, word, try_scanning=False):
+    #根据wait_for()方法创建此方法
+    def scan_for(self, word, button, try_scanning=False, max=1):
+        self.root.info("SCAN FOR {} BUTTON".format(word))
+        ok = ''
+        index = 0
+        while ok != word:
+            index = index + 1
+            if index > max:
+                self.root.info("{} BUTTON NOT FOUND!".format(word))
+                break
+
+            #self.root.info("Index: {}, Max: {}".format(index, max))
+
+            img = self.get_img_from_screen_shot()
+            img = img[745:770, 210:270]
+            try:
+                if try_scanning:
+                    self.scan_for_ok(LOW_CORR)
+                ok = self.img_to_string(img, alphabet)
+            except:
+                self.wait_for_ui(1)
+                continue
+            if ok == word:
+                self.root.info("{} BUTTON FOUND!".format(word))
+                self.tapnsleep(button, 1)
+                break
+            
+            self.wait_for_ui(1)
+
+    def wait_for(self, word, try_scanning=False, max=5):
         self.root.info("WAITING FOR {} BUTTON TO APPEAR".format(word))
         ok = ''
+        index = 0
         while ok != word and not self.run_time.stop:
-            # root.debug("waiting for {}".format(word))
+            index = index + 1
+            if index > max:
+                self.root.info("{} BUTTON NOT FOUND!".format(word))
+                break
+
             img = self.get_img_from_screen_shot()
             img = img[745:770, 210:270]
             try:
@@ -204,6 +238,9 @@ class Nox(Provider):
                             details="Battle Modes are now defined separate from the provider")
     def battle(self, info=None, check_battle=False):
         "The main battle mode"
+
+        self.root.info("nox.battle()")
+
         if check_battle:
             self.wait_for_auto_duel()
             self.click_auto_duel()
@@ -321,4 +358,6 @@ class Nox(Provider):
                 
                 dl_info.status = "success/Gift"
                 loop_scan(self.scan_for_ok, **{'info': dl_info})
+
+
             self.wait_for_ui(3) # 延长扫描间隔时间

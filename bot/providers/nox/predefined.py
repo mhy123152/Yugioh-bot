@@ -108,6 +108,10 @@ class NoxPredefined(Predefined):
         return 450, 600 # 修改NPC对话窗口点击位置
 
     @property
+    def dialog_no(self):
+        return 150, 440
+
+    @property
     def skip_tap(self):
         return 200, 110 # 点击一个空白位置
 

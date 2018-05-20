@@ -77,7 +77,7 @@ class NPCBattle(AbstractBattle):
             self.provider.wait_for_auto_duel()
             self.provider.__check_battle_is_running__()
         self.signalers[CheckPoints.afterStarting].emit(info)
-        self.provider.wait_for('OK')
+        self.provider.wait_for('OK', max=99)
         self.signalers[CheckPoints.beforeEnding].emit(info)
         if info:
             info.status = "Battle Ended"
@@ -89,8 +89,12 @@ class NPCBattle(AbstractBattle):
         self.provider.wait_for('NEXT', True)
         self.provider.tapnsleep(self.provider.predefined.button_duel, 5)
         self.provider.wait_for_white_bottom(True)
-        self.provider.wait_for_ui(5)
-        self.provider.tapnsleep(self.provider.predefined.button_duel, 3)
+        self.provider.tapnsleep(self.provider.predefined.button_duel, 10)
+
+        #TODO:需要判断决斗者是否是流浪汉
+        #if "agabond" in info.name:
+        self.provider.tapnsleep(self.provider.predefined.dialog_no, 5) #当决斗对象为流浪汉时，决斗结束以后会询问是否查看牌组，添加点击No动作
+
         dialog = True
         while dialog:
             self.provider.wait_for_ui(5) # 设置扫描决斗结束的间隔时间为5s

@@ -60,6 +60,9 @@ class Provider(DuelLinks, Misc, Actions):
             self.wait_for_ui(1)
             self.scan_for_ok()
             self.wait_for_ui(1)
+            self.scan_for('NEXT', self.predefined.button_duel, max=2) #避免没有正常结束决斗时无法重新开始扫描
+            self.wait_for_ui(1)
+            self.scan_for('NEXT', self.predefined.button_duel, max=2)
 
             self.tapnsleep(self.predefined.skip_tap, 1) #跳过各种人物出现，活动界面
             self.tapnsleep(self.predefined.skip_tap, 1)
@@ -73,6 +76,7 @@ class Provider(DuelLinks, Misc, Actions):
                 self.register_thread(None)
                 raise e
         self.register_thread(None)
+
 
     def battle_mode(self, battle, version, info):
         img = self.get_img_from_screen_shot(True)

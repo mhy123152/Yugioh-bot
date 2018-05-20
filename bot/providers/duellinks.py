@@ -215,8 +215,12 @@ class DuelLinks(object):
         raise NotImplementedError("pass_through_initial_screen not implemented")
 
     @abstractmethod
-    def wait_for(self, word, try_scanning=False):
+    def wait_for(self, word, try_scanning=False, max=5):
         raise NotImplementedError("wait_for not implemented")
+
+    @abstractmethod
+    def scan_for(self, word, button, try_scanning=False, max=1):
+        raise NotImplementedError("scan_for not implemented")
 
     @abstractmethod
     def wait_for_auto_duel(self):
