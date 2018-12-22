@@ -190,6 +190,18 @@ class Nox(Provider):
         location = os.path.join(self.assets, "close.png")
         return self.__wrapper_kmeans_result__(t, location, corr, info)
 
+    #定义搜索Retry按钮，解决断网时无法继续决斗的问题
+    #方法未完成,缺少retry.png图片
+    #TODO
+    def scan_for_retry(self, corr=HIGH_CORR, info=None, img=None):
+        corrword = 'HIGH' if corr == HIGH_CORR else 'LOW'
+        self.root.debug("LOOKING FOR RETRY BUTTON, {} CORRERLATION".format(corrword))
+        if img is None:
+            img = self.get_img_from_screen_shot()
+        t = tm.Trainer(img, 400, 500)
+        location = os.path.join(self.assets, "retry.png")
+        return self.__wrapper_kmeans_result__(t, location, corr, info)
+
     def method_name(self):
         super(Nox, self).method_name()
 
