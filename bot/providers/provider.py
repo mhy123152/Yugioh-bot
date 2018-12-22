@@ -52,6 +52,8 @@ class Provider(DuelLinks, Misc, Actions):
             self.root.debug("Run through {}".format(x + 1))
 
             self.wait_for_ui(5) #由于网络原因，设置待UI时间为5秒
+            self.scan_for_ok() #点击ok按钮
+            self.wait_for_ui(5) 
             self.compare_with_back_button()
             self.wait_for_ui(5)
             self.compare_with_back_button() #由于新增活动，可能每次启动需要点击两次后退按钮
@@ -60,7 +62,7 @@ class Provider(DuelLinks, Misc, Actions):
             self.wait_for_ui(5)
             self.scan_for_close() #点击关闭按钮
             self.wait_for_ui(5)
-            self.scan_for_ok() #点击ok按钮
+            self.scan_for_ok()
             self.wait_for_ui(5)
             self.scan_for('NEXT', self.predefined.button_duel, max=2) #避免没有正常结束决斗时无法重新开始扫描
             self.wait_for_ui(5)

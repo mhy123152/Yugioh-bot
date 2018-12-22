@@ -1,0 +1,1 @@
+D:\Anaconda3\python.exe main.py bot -s

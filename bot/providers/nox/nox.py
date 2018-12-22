@@ -150,7 +150,7 @@ class Nox(Provider):
             self.root.info("Checking for Start Screen")
             try:
                 is_home_screen = self.__generic_wait_for__('DuelLinks Landing Page', lambda x: x is True,
-                                                           self.__is_initial_screen__, timeout=4, throw=False)
+                                                           self.__is_initial_screen__, timeout=30, throw=False) #设置等待APP启动完毕时间为30秒
             except concurrent.futures.TimeoutError:
                 is_home_screen = False
             if not is_home_screen:
