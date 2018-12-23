@@ -150,19 +150,23 @@ class Nox(Provider):
             self.root.info("Checking for Start Screen")
             try:
                 is_home_screen = self.__generic_wait_for__('DuelLinks Landing Page', lambda x: x is True,
-                                                           self.__is_initial_screen__, timeout=30, throw=False) #设置等待APP启动完毕时间为30秒
+                                                           self.__is_initial_screen__, timeout=8, throw=False) 
             except concurrent.futures.TimeoutError:
                 is_home_screen = False
+
+            self.root.info("Wait Landing Page Finish")
+
             if not is_home_screen:
                 return
+
         self.__generic_wait_for__('DuelLinks Landing Page', lambda x: x is True,
-                                  self.__is_initial_screen__, timeout=20)
+                                  self.__is_initial_screen__, timeout=30) #设置等待APP启动完毕时间为30秒
         self.tapnsleep(self.predefined.yugioh_initiate_link, 2)
         timeout = 45
         if self.scan_for_download():
             timeout = 480
-        self.__generic_wait_for__('Notifications Page', lambda x: x is True, self.wait_for_notifications,
-                                  timeout=timeout)
+        self.__generic_wait_for__('Notifications Page', lambda x: x is True,
+                                  self.wait_for_notifications, timeout=timeout)
         self.wait_for_notifications()
 
     def wait_for_notifications(self, *args, **kwargs):
@@ -171,6 +175,7 @@ class Nox(Provider):
         self.scan_for_ok()
         self.wait_for_ui(3)
         t = self.compare_with_back_button(corr=5)
+        self.compare_with_back_button(corr=5) #由于新增活动，可能每次启动需要点击两次后退按钮
         return t
 
     def scan_for_download(self, corr=HIGH_CORR, info=None):
@@ -327,18 +332,30 @@ class Nox(Provider):
         index = 0;
         for x, y, current_page in self.possible_battle_points():
             index = index + 1
+
+            #if index > 6: # 每个页面扫描6次
+            #    return
+
             self.root.debug("scan() {}".format(index))
 
             self.tapnsleep(self.predefined.skip_tap, 1)
             self.tapnsleep(self.predefined.skip_tap, 1)
             self.tapnsleep(self.predefined.skip_tap, 1)
 
+            self.scan_for_close()
+            self.wait_for_ui(5)
             self.compare_with_back_button(info=None)
-            self.wait_for_ui(1)
-            self.tapnsleep((x, y), 1)
+            self.wait_for_ui(5)
+
+            if y > 440 and y < 660: 
+                self.tapnsleep((x, y), 5)
+            else:
+                self.root.debug("Skip Point {}, {}".format(x, y)) #跳过不在范围内的的点
+                continue
+            
             img1 = self.get_img_from_screen_shot()
             battle = self.check_if_battle(img1)
-            self.wait_for_ui(3)
+            self.wait_for_ui(5)
             dl_info = DuelLinksInfo(x, y, current_page, "Starting Battle")
             version = 0
             if battle:

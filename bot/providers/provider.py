@@ -44,7 +44,7 @@ class Provider(DuelLinks, Misc, Actions):
         t = threading.currentThread()
         self.register_thread(t)
         self.root.info("starting auto run through")
-        for x in range(0, 888): # 无限运行
+        for x in range(0, 3): # 扫描4个页面
             #if self.run_time.stop:
             #    # Leaves a checkpoint when stopped
             #    self.current_run = x
@@ -53,16 +53,12 @@ class Provider(DuelLinks, Misc, Actions):
 
             self.wait_for_ui(5) #由于网络原因，设置待UI时间为5秒
             self.scan_for_ok() #点击ok按钮
+            self.wait_for_ui(5)
+            self.scan_for_close()
             self.wait_for_ui(5) 
             self.compare_with_back_button()
             self.wait_for_ui(5)
-            self.compare_with_back_button() #由于新增活动，可能每次启动需要点击两次后退按钮
-            self.wait_for_ui(5)
             self.compare_with_cancel_button() #点击取消按钮
-            self.wait_for_ui(5)
-            self.scan_for_close() #点击关闭按钮
-            self.wait_for_ui(5)
-            self.scan_for_ok()
             self.wait_for_ui(5)
             self.scan_for('NEXT', self.predefined.button_duel, max=2) #避免没有正常结束决斗时无法重新开始扫描
             self.wait_for_ui(5)
@@ -252,7 +248,7 @@ class Provider(DuelLinks, Misc, Actions):
 
     def do_system_call(self, command):
         if not self.run_time.stop:
-            self.root.debug("RUN COMMAND: '{}'".format(command))
+            #self.root.debug("RUN COMMAND: '{}'".format(command))
             CREATE_NO_WINDOW = 0x08000000
             subprocess.call(command, shell=True, creationflags=CREATE_NO_WINDOW)
 
@@ -317,6 +313,7 @@ class Provider(DuelLinks, Misc, Actions):
                 self.root.info("NPC Battle Mode,Points: ({},{}) at location: ({}), message: {}".format(
                     info.x, info.y, info.page, info.status
                 ))
+            self.wait_for_ui(5)
             self.tap(x, y)
             return True
         return False
